@@ -16,8 +16,14 @@ var program = require('commander'),
   label = clc.bright.red;
 
 
+var creed = require('./../assets/creedface');
 
+program.command('creedface')
+  .description('creeding the face')
+  .action(function( name ){
+console.log( valid(creed.face()) );
 
+});
 
 
 
