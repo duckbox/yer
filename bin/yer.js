@@ -38,12 +38,27 @@ if (program.bbq) console.log('  - bbq');
 
 
 var os = require('os');
+var _OS = os.type();
 
 program.command('os').action(function(){
 
   console.log( os.type() );
 
 });
+
+var OS = {
+  'Darwin' : {
+    hosts : '/etc/hosts',
+    vhosts : '/etc/apache2/extra/httpd-vhosts.conf'
+  },
+  'Linux' : {
+    hosts : '/etc/hosts',
+    vhosts : '/etc/apache2/sites-available',
+    enabled : '/etc/apache2/sites-enabled'
+  }
+}
+
+var system = OS[_OS]; 
 
 
 var working_path = process.cwd();
@@ -77,7 +92,7 @@ var reWrite = function( args ) {
         } catch( err ) {
 
           console.log( error('FFS! - use sudo!') );
-          process.exit()
+          process.exit();
 
         }
          // } else {
@@ -107,12 +122,29 @@ program.command('host [name] ]')
 
     name = name || (working_path.substring(working_path.lastIndexOf("/")+1, working_path.length ));
 
-    reWrite({ file : '/etc/hosts', content : HOSTS.replace(/{vh}/, name), name : name, match : name });
-    reWrite({ file : '/etc/apache2/extra/httpd-vhosts.conf', content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
+    if( _OS === 'Darwin' ) {
+
+      reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
+      reWrite({ file : system.vhosts, content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
+
+    } else {
+
+      reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
+      fs.writeFileSync(system.vhosts+'/'+name, VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path));
+
+          console.log( clc.bright.yellow('Building..') );
+          exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart", function (error, stdout, stderr) {
+
+            console.log( clc.bright.green('YEEEOOO!!.. all done. ')+clc.bright.red(' @ http:/'+name+'/') );
+
+          });
+
+    }
+
 
     exec("sudo httpd -k restart", function (error, stdout, stderr) {
 
-      console.log( clc.bright.green('YEEEOOO!!.. all done.') );
+      console.log( clc.bright.green('YEEEOOO!!.. all done. ')+clc.bright.red(' @ http:/'+name+'/') );
 
     });
 
