@@ -2,42 +2,25 @@
 "user strict";
 
 var program = require('commander'),
-	clc = require('cli-color');
+  clc = require('cli-color'),
+  fs = require('fs'),
+  sys = require('util'),
+  exec = require('child_process').exec,
+  os = require('os'),
 
-  var sys = require('util');
-var exec = require('child_process').exec;
-
-
-var error = clc.red.bold;
-
-var fs = require('fs');
-/*program
-  .version('0.0.1')
-  .option('-p, --peppers [env]', 'Add peppers', parseFloat)
-  .option('-P, --pineapple', 'Add pineapple')
-  .option('-b, --bbq', 'Add bbq sauce')
-  .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
-  .parse(process.argv);
-
-//console.log('you ordered a pizza with:');
-if (program.peppers) console.log('  - peppers %j', env);
-if (program.pineapple) console.log('  - pineappe');
-if (program.bbq) console.log('  - bbq');
-//console.log('  - %s cheese', program.cheese);*/
-
-/*fs.readdir('js/src',function( err, files ){
-	
-	files.forEach(function( file ){
-
-		console.log( clc.green.underline(file) );
-
-	});
-
-});*/
+  /*
+    Short hand color functions
+  */
+  error = clc.red.bold,
+  valid = clc.bright.green,
+  label = clc.bright.red;
 
 
 
-var os = require('os');
+
+
+
+
 var _OS = os.type();
 
 program.command('os').action(function(){
@@ -74,35 +57,32 @@ var VIRTUAL_HOST =
 var HOSTS = '127.0.0.1 {vh}';
 
 var reWrite = function( args ) {
-  var data = fs.readFileSync(args.file, 'ascii' /*, function(err,data){*/ );
+  
+  var data = fs.readFileSync(args.file, 'ascii');
       
-      var pattern = new RegExp(args.match);
+  var pattern = new RegExp(args.match);
 
-      if( pattern.test( data ) ) {
-        console.log( clc.bright.green('Sake.. ') + clc.bright.red(args.name) + ' exists in ' + clc.bright(args.file) );
-        process.exit();
-      } 
+  if( pattern.test( data ) ) {
+    console.log( valid('Sake.. ') + clc.bright.red(args.name) + ' exists in ' + clc(args.file) );
+    process.exit();
+  } 
 
-      //if( !err ) {
+  try {
 
-        try {
-          fs.writeFileSync(args.file, data+'\n'+args.content/*, function(err){*/);
-          console.log( clc.bright.green('YEEEOOO!!.. ') + 'Added ' + clc.red(args.name) + ' to ' + clc.bright(args.file) );
-        
-        } catch( err ) {
+    fs.writeFileSync( args.file, data+'\n'+args.content );
+    console.log( valid('YEEEOOO!!.. ') + 'Added ' + clc.red(args.name) + ' to ' + clc(args.file) );
 
-          console.log( error('FFS! - use sudo!') );
-          process.exit();
+  } catch( err ) {
 
-        }
-         // } else {
-         // }
+    console.log( error('FFS! - use sudo!') );
+    process.exit();
 
-     //   });
+  }
 
-     // }
+},
 
-   // });
+hostComplete = function( name ) {
+  console.log( valid('YEEEOOO!!.. all done. ')+label(' @ http://'+name+'/') );
 }
 
 
@@ -127,51 +107,31 @@ program.command('host [name] ]')
       reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
       reWrite({ file : system.vhosts, content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
 
+      exec("sudo httpd -k restart", function (error, stdout, stderr) {
+
+        hostComplete( name );
+
+      });
+
     } else {
 
       reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
       fs.writeFileSync(system.vhosts+'/'+name, VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path));
 
-          console.log( clc.bright.yellow('Building..') );
-          exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart", function (error, stdout, stderr) {
+      console.log( clc.bright.yellow('Building..') );
+      exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart", function (error, stdout, stderr) {
 
-            console.log( clc.bright.green('YEEEOOO!!.. all done. ')+clc.bright.red(' @ http:/'+name+'/') );
+        hostComplete( name );
 
-          });
+      });
 
     }
-
-
-    exec("sudo httpd -k restart", function (error, stdout, stderr) {
-
-      console.log( clc.bright.green('YEEEOOO!!.. all done. ')+clc.bright.red(' @ http:/'+name+'/') );
-
-    });
-
-    //console.log( HOSTS.replace(/{vh}/, name) );
-    //console.log( VIRTUAL_HOST.replace(/{vh}/, 'foo').replace(/{vp}/, working_path) );
-
     
 
   });
 
-/*program.prompt('name: ', function(name){
-  console.log('hi %s', name);
-  //process.exit();
-});*/
-
 program.parse(process.argv)
 
-/*console.log( error('FFS!') );
 
-var prin = { "text" : 'foo' };
-
-fs.writeFile("boomie-bacon.json", JSON.stringify(prin), function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        //console.log("The file was saved!");
-    }
-}); */
 
 
