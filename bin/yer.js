@@ -59,32 +59,35 @@ var VIRTUAL_HOST =
 var HOSTS = '127.0.0.1 {vh}';
 
 var reWrite = function( args ) {
-  fs.readFile(args.file, 'ascii', function(err,data){
+  var data = fs.readFileSync(args.file, 'ascii' /*, function(err,data){*/ );
       
-      var pattern = new RegExp(args.name);
+      var pattern = new RegExp(args.match);
 
       if( pattern.test( data ) ) {
-        console.log('AYE');
-      } else {
-        console.log('NAY!');
-      }
+        console.log( clc.bright.green('Sake.. ') + clc.bright.red(args.name) + ' exists in ' + clc.bright(args.file) );
+        process.exit();
+      } 
 
+      //if( !err ) {
 
-      /*if( !err ) {
+        try {
+          fs.writeFileSync(args.file, data+'\n'+args.content/*, function(err){*/);
+          console.log( clc.bright.green('YEEEOOO!!.. ') + 'Added ' + clc.red(args.name) + ' to ' + clc.bright(args.file) );
+        
+        } catch( err ) {
 
-        fs.writeFile(args.file, args.content+data, function(err){
+          console.log( error('FFS! - use sudo!') );
+          process.exit()
 
-          if(err) {
-            console.log(error('FFS! - use sudo!'));
-          } else {
-            console.log(args.content);
-          }
+        }
+         // } else {
+         // }
 
-        });
+     //   });
 
-      }*/
+     // }
 
-    });
+   // });
 }
 
 
@@ -99,17 +102,19 @@ request('https://raw.github.com/necolas/normalize.css/master/normalize.css', fun
 });*/
 
 program.command('host [name] ]')
-  .description('add a vhost based for the project you are in')
+  .description('add a vhost for a project')
   .action(function( name ){
 
-    name = name || (working_path.substring(working_path.lastIndexOf("/")+1, working_path.length));
+    name = name || (working_path.substring(working_path.lastIndexOf("/")+1, working_path.length ));
 
-    //reWrite({ file : '/etc/hosts', content : HOSTS.replace(/{vh}/, name) });
-    //
+    reWrite({ file : '/etc/hosts', content : HOSTS.replace(/{vh}/, name), name : name, match : name });
+    reWrite({ file : '/etc/apache2/extra/httpd-vhosts.conf', content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
 
-    console.log( name );
+    exec("sudo httpd -k restart", function (error, stdout, stderr) {
 
-    //reWrite({ file : '/etc/apache2/extra/httpd-vhosts.conf', content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name });
+      console.log( clc.bright.green('YEEEOOO!!.. all done.') );
+
+    });
 
     //console.log( HOSTS.replace(/{vh}/, name) );
     //console.log( VIRTUAL_HOST.replace(/{vh}/, 'foo').replace(/{vp}/, working_path) );
