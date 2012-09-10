@@ -1,5 +1,5 @@
 
-"user strict";
+"use strict";
 
 var program = require('commander'),
   clc = require('cli-color'),
