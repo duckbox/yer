@@ -4,7 +4,7 @@
 var program = require('commander'),
 	clc = require('cli-color');
 
-  var sys = require('sys');
+  var sys = require('util');
 var exec = require('child_process').exec;
 
 
