@@ -102,28 +102,38 @@ program.command('host [name] ]')
 
     name = name || (working_path.substring(working_path.lastIndexOf("/")+1, working_path.length ));
 
-    if( _OS === 'Darwin' ) {
+    switch( _OS ) {
 
-      reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
-      reWrite({ file : system.vhosts, content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
+      case 'Darwin' :
 
-      exec("sudo httpd -k restart", function (error, stdout, stderr) {
+        reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
+        reWrite({ file : system.vhosts, content : VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path), name : name, match : 'ServerName ' + name });
 
-        hostComplete( name );
+        exec("sudo httpd -k restart && open http://"+name+"/", function (error, stdout, stderr) {
 
-      });
+          hostComplete( name );
 
-    } else {
+        });
 
-      reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
-      fs.writeFileSync(system.vhosts+'/'+name, VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path));
+      break;
+      case 'Linux' :
 
-      console.log( clc.bright.yellow('Building..') );
-      exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart", function (error, stdout, stderr) {
+        reWrite({ file : system.hosts, content : HOSTS.replace(/{vh}/, name), name : name, match : name });
+        fs.writeFileSync(system.vhosts+'/'+name, VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, working_path));
 
-        hostComplete( name );
+        console.log( clc.bright.yellow('Building..') );
+        exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart && x-www-browser http://"+name+"/", function (error, stdout, stderr) {
 
-      });
+          hostComplete( name );
+
+        });
+
+      case 'Windows_NT' :
+        console.log( error('Yer shitty OS is not supported') );
+      break;
+      default :
+        console.log( label('Luv, I have no idea what OS this is') );
+      break;
 
     }
     
