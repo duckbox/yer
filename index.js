@@ -22,7 +22,7 @@ if (program.pineapple) console.log('  - pineappe');
 if (program.bbq) console.log('  - bbq');
 //console.log('  - %s cheese', program.cheese);*/
 
-fs.readdir('js/src',function( err, files ){
+/*fs.readdir('js/src',function( err, files ){
 	
 	files.forEach(function( file ){
 
@@ -30,11 +30,11 @@ fs.readdir('js/src',function( err, files ){
 
 	});
 
-});
+});*/
 
 var os = require('os');
 
-console.log( os.type() );
+console.log( error( os.type() ) );
 
 /*
 fs.readFile('/etc/hosts', 'ascii', function(err,data){
