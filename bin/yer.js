@@ -99,11 +99,11 @@ program.command('creedface')
   .description('creeding the face')
   .action(function( name ){
 
-    var files = wrench.copyDirSyncRecursive('../duckboxn', 'testiz');
+    //var files = wrench.copyDirSyncRecursive('../duckboxn', 'testiz');
 
-    console.log( files );
+    //console.log( files );
 
-    //console.log( valid(creed.face()) );
+    console.log( valid(creed.face()) );
 
 });
 
