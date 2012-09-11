@@ -107,6 +107,18 @@ program.command('creedface')
 
 });
 
+program.command('steven')
+  .description('STEVEN GTFO')
+  .action(function( name ){
+
+    //var files = wrench.copyDirSyncRecursive('../duckboxn', 'testiz');
+
+    //console.log( files );
+
+    console.log( valid(creed.steven()) );
+
+});
+
 program.command('os').action(function(){
 
   console.log( os.type() );
