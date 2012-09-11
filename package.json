@@ -15,7 +15,8 @@
   },
   "devDependencies": {
     "commander": "*",
-    "cli-color": "*"
+    "cli-color": "*",
+    "wrench": "*"
   },
   "engines": {
     "node": ">=0.6.0 <0.9.0"

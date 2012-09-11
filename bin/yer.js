@@ -1,13 +1,21 @@
-
 "use strict";
+
+/*global console*/
+/*global process*/
+/*global require*/
 
 /* modules */
 var program = require('commander'),
   clc = require('cli-color'),
+  wrench = require('wrench'),
+
+  // Native
   fs = require('fs'),
   sys = require('util'),
   exec = require('child_process').exec,
   os = require('os'),
+
+  // Local
   creed = require('./../assets/creedface'),
 
   /*
@@ -21,7 +29,7 @@ var program = require('commander'),
     Assets
   */
   assets = {
-    VIRTUAL_HOST : 
+    VIRTUAL_HOST :
       '<VirtualHost *:80>\n'+
       '   DocumentRoot "{vp}" \n'+
       '   ServerName {vh}\n'+
@@ -56,7 +64,7 @@ var program = require('commander'),
     if( pattern.test( data ) ) {
       console.log( valid('Sake.. ') + clc.bright.red(args.name) + ' exists in ' + clc(args.file) );
       process.exit();
-    } 
+    }
 
     try {
 
@@ -73,8 +81,8 @@ var program = require('commander'),
   },
 
   hostComplete = function( name ) {
-    console.log( valid('YEEEOOO!!.. all done. ')+label(' @ http://'+name+'/') );
-  }
+    console.log( valid('All done. ')+clc.bright.yellow(assets.working_path)+valid.bold(' => ')+label(' @ http://'+name+'/') );
+  };
 
 
 
@@ -91,7 +99,11 @@ program.command('creedface')
   .description('creeding the face')
   .action(function( name ){
 
-    console.log( valid(creed.face()) );
+    var files = wrench.copyDirSyncRecursive('../duckboxn', 'testiz');
+
+    console.log( files );
+
+    //console.log( valid(creed.face()) );
 
 });
 
@@ -112,9 +124,10 @@ program.command('host [name] ]')
 
       case 'Darwin' :
 
-        reWrite({ file : system.hosts, content : assets.HOSTS.replace(/{vh}/, name), name : name, match : name });
-        reWrite({ file : system.vhosts, content : assets.VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, assets.working_path), name : name, match : 'ServerName ' + name });
+        reWrite({ file : system.hosts, content : assets.HOSTS.replace(/\{vh\}/, name), name : name, match : name });
+        reWrite({ file : system.vhosts, content : assets.VIRTUAL_HOST.replace(/\{vh\}/, name).replace(/\{vp\}/, assets.working_path), name : name, match : 'ServerName ' + name });
 
+        console.log( clc.bright.yellow('Finishing..') );
         exec("sudo httpd -k restart && open http://"+name+"/", function (error, stdout, stderr) {
 
           hostComplete( name );
@@ -124,10 +137,10 @@ program.command('host [name] ]')
       break;
       case 'Linux' :
 
-        reWrite({ file : system.hosts, content : assets.HOSTS.replace(/{vh}/, name), name : name, match : name });
-        fs.writeFileSync(system.vhosts+'/'+name, assets.VIRTUAL_HOST.replace(/{vh}/, name).replace(/{vp}/, assets.working_path));
+        reWrite({ file : system.hosts, content : assets.HOSTS.replace(/\{vh\}/, name), name : name, match : name });
+        fs.writeFileSync(system.vhosts+'/'+name, assets.VIRTUAL_HOST.replace(/\{vh\}/, name).replace(/\{vp\}/, assets.working_path));
 
-        console.log( clc.bright.yellow('Building..') );
+        console.log( clc.bright.yellow('Finishing..') );
         exec("cd "+system.enabled+" && sudo a2ensite "+name+" && sudo service apache2 restart && x-www-browser http://"+name+"/", function (error, stdout, stderr) {
 
           hostComplete( name );
@@ -135,7 +148,7 @@ program.command('host [name] ]')
         });
 
       case 'Windows_NT' :
-        console.log( error('Yer shitty OS is not supported') );
+        console.log( error('Yer shitty OS is not supported for yer host') );
       break;
       default :
         console.log( label('Luv, I have no idea what OS this is') );
@@ -146,8 +159,7 @@ program.command('host [name] ]')
 
   });
 
-program.parse(process.argv)
-
+program.parse(process.argv);
 
 
 
