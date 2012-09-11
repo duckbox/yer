@@ -73,7 +73,7 @@ var program = require('commander'),
 
     } catch( err ) {
 
-      console.log( error('FFS! - use sudo!') );
+      console.log( clc.red('ಠ_ಠ ')+error('FFS! - use sudo!') );
       process.exit();
 
     }
