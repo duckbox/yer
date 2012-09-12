@@ -141,7 +141,7 @@ program.command('project [name]')
     request('https://raw.github.com/necolas/normalize.css/master/normalize.css', function (error, response, body) {
       if (!error && response.statusCode == 200) {
         
-        var files = creed.template('vanilla', name);
+        var files = creed.template('vanilla', { project : name });
 
         files.dirs.forEach(function( dir ){
           fs.mkdirSync(dir);

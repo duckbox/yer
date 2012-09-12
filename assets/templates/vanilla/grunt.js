@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: {
-        title: "{project}"
+        title: "<%= project %>"
     },
     sass: {
         dist: {

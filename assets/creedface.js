@@ -15,20 +15,24 @@ exports.steven = function () {
 
 };
 
-exports.template = function( type, name ) {
+exports.template = function( type, opts ) {
 
-	var fs = require('fs');
+	var fs = require('fs'),
+		_ = require('underscore');
+
+	var name = opts.project;
 
 	if( type === 'vanilla' ) {
 		return {
 			dirs : ['css','css/src','img','js','js/lib','js/src','js/node_modules'],
 
 			files : {
-				'index.html' : (fs.readFileSync(__dirname+'/templates/vanilla/index.html', 'ascii')).replace(/\{project\}/g,name).replace(/\{script\}/,name+'.min.js'),
+				//'index.html' : (fs.readFileSync(__dirname+'/templates/vanilla/index.html', 'ascii')).replace(/\{project\}/g,name).replace(/\{script\}/,name+'.min.js'),
+				'index.html' : _.template(fs.readFileSync(__dirname+'/templates/vanilla/index.html', 'ascii'), opts ),
 				'css/src/layout.scss' : '',
 				'css/src/norm.css' : '',
-				'js/package.json' : (fs.readFileSync(__dirname+'/templates/vanilla/package.json', 'ascii').replace(/\{project\}/g,name)),
-				'js/grunt.js' : (fs.readFileSync(__dirname+'/templates/vanilla/grunt.js', 'ascii').replace(/\{project\}/g,name)),
+				'js/package.json' : _.template(fs.readFileSync(__dirname+'/templates/vanilla/package.json', 'ascii'), opts),
+				'js/grunt.js' : _.template(fs.readFileSync(__dirname+'/templates/vanilla/grunt.js', 'ascii'), opts),
 				'js/src/app.js': '$(function(){\n\n 	console.log("'+name+' init");\n\n});'
 			}
 

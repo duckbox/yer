@@ -1,5 +1,5 @@
 {
-  "name": "{project}",
+  "name": "<%= project %>",
   "author": "Chris Grant <chrisgrant@rehabstudio.com>",
   "version": "0.0.1",
   "dependencies" : {
