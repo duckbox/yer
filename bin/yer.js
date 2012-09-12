@@ -152,7 +152,7 @@ program.command('project [name]')
         };
 
         console.log( clc.yellow('Pulling yer resources and building..') );
-        //fs.writeFileSync("css/src/norm.css", body);
+        fs.writeFileSync("css/src/norm.css", body);
         request('http://code.jquery.com/jquery-latest.min.js', function (error, response, body) {
 
           fs.writeFileSync('js/lib/jquery.min.js', body );

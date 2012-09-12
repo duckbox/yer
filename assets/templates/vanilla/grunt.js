@@ -42,3 +42,12 @@ module.exports = function(grunt) {
   grunt.registerTask('build','sass cssmin concat min');
 
 };
+
+
+var re = /<script src=\"\b[^>]*>([\s\S]*?)\"><\/script>/gm;
+
+var match;
+while (match = re.exec('<script src="js/src/app.js"></script>')) {
+  // full match is in match[0], whereas captured groups are in ...[1], ...[2], etc.
+  console.log(match[1]);
+}
