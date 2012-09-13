@@ -16,14 +16,14 @@ module.exports = function(grunt) {
     },
     concat : {
         dist : {
-            src : ['lib/jquery.min.js', 'src/app.js'],
-            dest : '{project}.min.js'
+            src : <%= files %>,
+            dest : '<%= project %>.min.js'
         }
     },
     min : {
         dist : {
             src : '<config:concat.dist.dest>',
-            dest : '{project}.min.js'
+            dest : '<%= project %>.min.js'
         }
     },
     cssmin: {
@@ -44,10 +44,10 @@ module.exports = function(grunt) {
 };
 
 
-var re = /<script src=\"\b[^>]*>([\s\S]*?)\"><\/script>/gm;
+/*var re = /<script src=\"\b[^>]*>([\s\S]*?)\"><\/script>/gm;
 
 var match;
 while (match = re.exec('<script src="js/src/app.js"></script>')) {
   // full match is in match[0], whereas captured groups are in ...[1], ...[2], etc.
   console.log(match[1]);
-}
+}*/

@@ -1,9 +1,17 @@
 {
-  "name": "<%= project %>",
-  "author": "Chris Grant <chrisgrant@rehabstudio.com>",
-  "version": "0.0.1",
-  "dependencies" : {
-    "grunt-css"   :  "*",
-    "grunt-sass"   :  "*"
-  }
+	"name": "<%= project %>",
+	"author": "Chris Grant <chrisgrant@rehabstudio.com>",
+	"version": "0.0.1",
+	"dependencies": {
+		"grunt-css": "*",
+		"grunt-sass": "*"
+	},
+	"yer": {
+		"lib": [
+			"lib/jquery.min.js"
+		],
+		"src": [
+			"src/app.js"
+		]
+	}
 }

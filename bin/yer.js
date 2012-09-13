@@ -9,6 +9,7 @@ var program = require('commander'),
   clc = require('cli-color'),
   //wrench = require('wrench'),
   request = require('request'),
+  _ = require('underscore'),
 
   // Native
   fs = require('fs'),
@@ -180,6 +181,45 @@ program.command('steven')
   .action(function( name ){
 
     console.log( valid(creed.steven()) );
+
+});
+
+program.command('sync')
+  .description('sync assets')
+  .action(function( name ){
+
+    var lib_files = fs.readdirSync('lib'),
+      src_files = fs.readdirSync('src');
+
+    var contents = fs.readFileSync('package.json', 'ascii');
+
+    contents = JSON.parse(contents);
+
+    lib_files.map(function( file,i ){
+
+      contents.yer.lib.push('lib/'+file);
+
+    });
+
+    src_files.map(function( file,i ){
+
+      contents.yer.src.push('src/'+file);
+
+    });
+
+    contents.yer.lib = _.uniq( contents.yer.lib );
+    contents.yer.src = _.uniq( contents.yer.src );
+
+    var grunt_src = JSON.stringify( contents.yer.lib.concat( contents.yer.src ) );
+
+    //var tools = require('creedface');
+
+    fs.writeFileSync('grunt.js',creed.syncGrunt({
+      project : contents.name,
+      files : grunt_src
+    }));
+
+    fs.writeFileSync('package.json', JSON.stringify(contents,null,'\t'));
 
 });
 
