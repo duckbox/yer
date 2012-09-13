@@ -18,7 +18,7 @@ var program = require('commander'),
   os = require('os'),
 
   // Local
-  creed = require('./../assets/creedface'),
+  tools = require('./../assets/tools'),
 
   /*
     Short hand color functions
@@ -142,7 +142,7 @@ program.command('project [name]')
     request('https://raw.github.com/necolas/normalize.css/master/normalize.css', function (error, response, body) {
       if (!error && response.statusCode == 200) {
         
-        var files = creed.template('vanilla', { project : name });
+        var files = tools.template('vanilla', { project : name });
 
         files.dirs.forEach(function( dir ){
           fs.mkdirSync(dir);
@@ -172,7 +172,7 @@ program.command('creedface')
   .description('creeding the face')
   .action(function( name ){
 
-    console.log( valid(creed.face()) );
+    console.log( valid(tools.face()) );
 
 });
 
@@ -180,7 +180,7 @@ program.command('steven')
   .description('STEVEN GTFO')
   .action(function( name ){
 
-    console.log( valid(creed.steven()) );
+    console.log( valid(tools.steven()) );
 
 });
 
@@ -212,9 +212,7 @@ program.command('sync')
 
     var grunt_src = JSON.stringify( contents.yer.lib.concat( contents.yer.src ) );
 
-    //var tools = require('creedface');
-
-    fs.writeFileSync('grunt.js',creed.syncGrunt({
+    fs.writeFileSync('grunt.js', tools.syncGrunt({
       project : contents.name,
       files : grunt_src
     }));

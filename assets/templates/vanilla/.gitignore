@@ -1,0 +1,5 @@
+lib-cov
+js/node_modules/
+js/npm-debug.log
+
+.DS_Store
