@@ -27,6 +27,7 @@ exports.template = function( type, opts ) {
 			dirs : ['css','css/src','img','js','js/lib','js/src','js/node_modules'],
 
 			files : {
+				'.gitignore' : fs.readFileSync(__dirname+'/templates/vanilla/.gitignore', 'ascii'),
 				'index.html' : _.template(fs.readFileSync(__dirname+'/templates/vanilla/index.html', 'ascii'), opts ),
 				'css/src/layout.scss' : '',
 				'css/src/norm.css' : '',
